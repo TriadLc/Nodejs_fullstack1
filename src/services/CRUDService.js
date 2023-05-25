@@ -120,8 +120,6 @@ let deleteUserById = (userId) => {
     })
 }
 
-
-
 module.exports = {
     createNewUser: createNewUser,
     getAllUser: getAllUser,
