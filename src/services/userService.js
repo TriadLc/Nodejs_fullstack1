@@ -119,14 +119,14 @@ let createNewUser = (data) => {
           password: hashPassWordFromBcrypt,
           firstName: data.firstName,
           lastName: data.lastName,
-          addresss: data.addresss,
+          address: data.address,
           phonenumber: data.phonenumber,
           gender: data.gender === "1" ? true : false,
           roleId: data.roleId,
         });
         resolve({
           errCode: 0,
-          message: "Everything OK now~",
+          errMessage: `Everything's OK now~`,
         });
       }
     } catch (e) {
@@ -158,12 +158,12 @@ let updateUserData = (data) => {
 
         resolve({
           errCode: 0,
-          message: `Update the user succeeds~`,
+          errMessage: `Update the user succeeds~`,
         });
       } else {
         resolve({
           errCode: 0,
-          message: `User's not found~`,
+          errMessage: `User's not found~`,
         });
       }
     } catch (e) {
