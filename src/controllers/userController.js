@@ -60,11 +60,8 @@ let handleDeleteUser = async (req, res) => {
       errCode: 1,
       errMessage: `Missing required parameters!`,
     });
-    console.log("2");
   }
-  console.log("3");
   let message = await userService.deleteUser(req.body.id);
-  console.log("4");
   return res.status(200).json(message);
 };
 
@@ -76,10 +73,10 @@ let getAllCode = async (req, res) => {
     //console.log("Get all code errror: ", e);
     return res.status(200).json({
       errCode: -1,
-      errMessage: `Errror from server.`
-    })
+      errMessage: `Errror from server.`,
+    });
   }
-}
+};
 
 module.exports = {
   handleLoggin: handleLoggin,
