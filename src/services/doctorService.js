@@ -65,19 +65,36 @@ let saveDetailInforDoctorService = (inputData) => {
       if (
         !inputData.doctorId ||
         !inputData.contentHTML ||
-        !inputData.contentMarkdown
+        !inputData.contentMarkdown ||
+        !inputData.action
       ) {
         resolve({
           errCode: 1,
           errMessage: `Missing parameters`,
         });
       } else {
-        await db.Markdown.create({
-          contentHTML: inputData.contentHTML,
-          contentMarkdown: inputData.contentMarkdown,
-          description: inputData.description,
-          doctorId: inputData.doctorId,
-        });
+        if (inputData.action === "CREATE") {
+          await db.Markdown.create({
+            contentHTML: inputData.contentHTML,
+            contentMarkdown: inputData.contentMarkdown,
+            description: inputData.description,
+            doctorId: inputData.doctorId,
+          });
+        } else if (inputData.action === "EDIT") {
+          let doctorMarkdown = await db.Markdown.findOne({
+            where: { doctorId: inputData.doctorId },
+            raw: false,
+          });
+
+          if (doctorMarkdown) {
+            (doctorMarkdown.contentHTML = inputData.contentHTML),
+              (doctorMarkdown.contentMarkdown = inputData.contentMarkdown),
+              (doctorMarkdown.description = inputData.description),
+              (doctorMarkdown.updateAt = new Date());
+            await doctorMarkdown.save();
+          }
+        }
+
         resolve({
           errCode: 0,
           errMessage: `Save doctor's infor succeed~`,
@@ -121,10 +138,10 @@ let getDetailDoctorByIdService = (inputId) => {
         });
 
         if (data && data.image) {
-          data.image = new Buffer(data.iamge, "base64").toString("binary");
+          data.image = new Buffer(data.image, "base64").toString("binary");
         }
 
-        if (!data) data = [];
+        if (!data) data = {};
 
         resolve({
           errCode: 0,
