@@ -1,4 +1,7 @@
 import db from "../models/index";
+require("dotenv").config();
+import _, { reject } from "lodash";
+const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 
 let getTopDoctorHomeSerVice = (limitInput) => {
   return new Promise(async (resolve, reject) => {
@@ -138,7 +141,7 @@ let getDetailDoctorByIdService = (inputId) => {
         });
 
         if (data && data.image) {
-          data.image = new Buffer(data.image, "base64").toString("binary");
+          data.image = new Buffer.from(data.image, "base64").toString("binary");
         }
 
         if (!data) data = {};
@@ -154,9 +157,95 @@ let getDetailDoctorByIdService = (inputId) => {
   });
 };
 
+let bulkCreateScheduleService = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      //console.log("HoiDanIt check data gui len server: ", data);
+      if (!data.arrSchedule || !data.doctorId || !data.formattedDate) {
+        resolve({
+          errCode: -1,
+          errMessage: `Missing required param! Looxi o day nay`,
+        });
+      } else {
+        let schedule = data.arrSchedule;
+
+        if (schedule && schedule.length > 0) {
+          schedule = schedule.map((item) => {
+            item.maxNumber = MAX_NUMBER_SCHEDULE;
+            return item;
+          });
+        }
+
+        // get all existing data
+        let existing = await db.Schedule.findAll({
+          where: { doctorId: data.doctorId, date: data.formattedDate },
+          attributes: ["timeType", "date", "doctorId", "maxNumber"],
+          raw: true,
+        });
+
+        // convert.date
+        if (existing && existing.length > 0) {
+          existing = existing.map((item) => {
+            item.date = new Date(item.date).getTime();
+            return item;
+          });
+        }
+
+        //Conpare different
+        let toCreate = _.differenceWith(schedule, existing, (a, b) => {
+          return a.timeType === b.timeType && a.date === b.date;
+        });
+
+        //Create data
+        if (toCreate && toCreate.length > 0) {
+          await db.Schedule.bulkCreate(toCreate);
+        }
+
+        resolve({
+          errCode: 0,
+          errMessage: "OK~",
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+let getScheduleByDateService = (doctorId, date) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!doctorId || !date) {
+        resolve({
+          errCode: 1,
+          errMessage: `Missing required parameters! DAY NEE`,
+        });
+      } else {
+        let dataSchedule = await db.Schedule.findAll({
+          where: {
+            doctorId: doctorId,
+            date: date,
+          },
+        });
+
+        if (!dataSchedule) dataSchedule = [];
+
+        resolve({
+          errCode: 0,
+          data: dataSchedule,
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   getTopDoctorHomeSerVice: getTopDoctorHomeSerVice,
   getAllDoctorsService: getAllDoctorsService,
   saveDetailInforDoctorService: saveDetailInforDoctorService,
   getDetailDoctorByIdService: getDetailDoctorByIdService,
+  bulkCreateScheduleService: bulkCreateScheduleService,
+  getScheduleByDateService: getScheduleByDateService,
 };
