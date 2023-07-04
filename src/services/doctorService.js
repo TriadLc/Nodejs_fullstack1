@@ -122,7 +122,7 @@ let saveDetailInforDoctorService = (inputData) => {
           doctorInfor.paymentId = inputData.selectedPayment;
           doctorInfor.provinceId = inputData.selectedProvince;
           doctorInfor.nameClinic = inputData.nameClinic;
-          doctorInfor.addressClinic = inputData.nameClinic;
+          doctorInfor.addressClinic = inputData.addressClinic;
           doctorInfor.note = inputData.note;
 
           await doctorInfor.save();
@@ -134,7 +134,7 @@ let saveDetailInforDoctorService = (inputData) => {
             paymentId: inputData.selectedPayment,
             provinceId: inputData.selectedProvince,
             nameClinic: inputData.nameClinic,
-            addressClinic: inputData.nameClinic,
+            addressClinic: inputData.addressClinic,
             note: inputData.note,
           });
         }
@@ -307,6 +307,54 @@ let getScheduleByDateService = (doctorId, date) => {
   });
 };
 
+let getExtraInforDoctorByIdService = (idInput) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!idInput) {
+        resolve({
+          errCode: 1,
+          errMessage: `Missing required parameters!`,
+        });
+      } else {
+        let data = await db.Doctor_Infor.findOne({
+          where: {
+            doctorId: idInput,
+          },
+          attributes: {
+            exclude: ["id", "doctorId"],
+          },
+          include: [
+            {
+              model: db.Allcode,
+              as: "priceTypeData",
+              attributes: ["valueEn", "valueVi"],
+            },
+            {
+              model: db.Allcode,
+              as: "paymentTypeData",
+              attributes: ["valueEn", "valueVi"],
+            },
+            {
+              model: db.Allcode,
+              as: "provinceTypeData",
+              attributes: ["valueEn", "valueVi"],
+            },
+          ],
+          raw: false,
+          nest: true,
+        });
+        if (!data) data = {};
+        resolve({
+          errCode: 0,
+          data: data,
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   getTopDoctorHomeSerVice: getTopDoctorHomeSerVice,
   getAllDoctorsService: getAllDoctorsService,
@@ -314,4 +362,5 @@ module.exports = {
   getDetailDoctorByIdService: getDetailDoctorByIdService,
   bulkCreateScheduleService: bulkCreateScheduleService,
   getScheduleByDateService: getScheduleByDateService,
+  getExtraInforDoctorByIdService: getExtraInforDoctorByIdService,
 };
