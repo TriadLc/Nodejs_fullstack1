@@ -18,12 +18,13 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "mysql2": "^2.2.5",
+    "nodemailer": "^6.6.3",
     "sequelize": "^6.31.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
+    "@babel/core": "^7.22.6",
     "@babel/node": "^7.12.10",
-    "@babel/preset-env": "^7.12.10",
+    "@babel/preset-env": "^7.22.6",
     "nodemon": "^2.0.22",
     "sequelize-cli": "^6.2.0"
   },
