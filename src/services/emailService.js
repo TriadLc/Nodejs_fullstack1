@@ -33,8 +33,8 @@ let getBodyHTMLEmail = (dataSend) => {
       <p>Bạn nhân dược email này vì đã đặt lịch khám bệnh online trên Clone-chanel</p>
       <p>Thông tin đặt lịch khám bệnh: </p>
       <div> 
-          <h5>Bác sĩ: ${dataSend.doctorName}</h5></br>
-          <h5>Thời gian: ${dataSend.time}</h5>
+          <h4>Bác sĩ: ${dataSend.doctorName}</h4></br>
+          <h4>Thời gian: ${dataSend.time}</h4>
   
           <p>Nếu thông tin trên đúng sự thật, vui lòng chọn vào đường link bên dưới
           để xác nhận và hoàn tất thủ tục đặt lịch khám bệnh.</p>
@@ -50,8 +50,8 @@ let getBodyHTMLEmail = (dataSend) => {
       <p>You received this email because you booked an online medical appointment </p>
       <p>Information to schedule an appointment: </p>
       <div> 
-          <h5>Doctor: ${dataSend.doctorName}</h5></br>
-          <h5>Time: ${dataSend.time}</h5>
+          <h4>Doctor: ${dataSend.doctorName}</h4></br>
+          <h4>Time: ${dataSend.time}</h4>
   
           <p>If the above information is true. please click on the link below to .</p>
       </div>
